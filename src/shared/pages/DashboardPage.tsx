@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../../src/features/auth/contexts/AuthContext';
 
 import { LogOut, LayoutDashboard, Target, Users, User, FileText, Settings, Activity } from 'lucide-react';
-import { AdminDashboard } from '../../../src/features/developer/pages/AdminDashboard';
-import { ManagerDashboard } from '../../../src/features/developer/pages/ManagerDashboard';
+import { AdminDashboard } from '../../../src/features/admin/pages/AdminDashboard';
+import { ManagerDashboard } from '../../../src/features/manager/pages/ManagerDashboard';
 import { DeveloperDashboard } from '../../../src/features/developer/pages/DeveloperDashboard';
-import { ClientDashboard } from '../../../src/features/developer/pages/ClientDashboard';
+import { ClientDashboard } from '../../../src/features/client/pages/ClientDashboard';
 
 interface DashboardPageProps {
   onNavigate: (page: string) => void;
