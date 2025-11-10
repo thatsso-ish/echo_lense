@@ -11,7 +11,6 @@ interface DashboardPageProps {
   onNavigate: (page: string) => void;
   pageData?: any;
 }
-
 export function DashboardPage({ onNavigate, pageData }: DashboardPageProps) {
   const { user, profile, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
