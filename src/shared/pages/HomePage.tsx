@@ -1,72 +1,33 @@
 import { ArrowRight, Sparkles, Zap, Users, Award } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { projectsData } from '../constants/projectData/FeaturedProjects';
 import { ProjectCard } from '../components/ProjectCard';
 
 interface HomePageProps {
   onNavigate: (page: string, data?: any) => void;
 }
 
-interface Project {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  cover_image: string | null;
-  category: string;
-  hours_spent: number | null;
-  project_type_detail: string | null;
-}
-
-interface ProjectWithTags extends Project {
-  tags: string[];
-}
-
 export function HomePage({ onNavigate }: HomePageProps) {
-  const [featuredProjects, setFeaturedProjects] = useState<ProjectWithTags[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [featuredProjects, setFeaturedProjects] = useState<typeof projectsData>([]);
 
   useEffect(() => {
-    fetchFeaturedProjects();
+    const filtered = projectsData
+      .filter((p) => p.featured && p.status === 'published')
+      .slice(0, 3);
+    setFeaturedProjects(filtered);
   }, []);
-
-  const fetchFeaturedProjects = async () => {
-    const { data: projectsData, error } = await supabase
-      .from('projects')
-      .select('id, title, slug, description, cover_image, category, hours_spent, project_type_detail')
-      .eq('status', 'published')
-      .eq('featured', true)
-      .order('created_at', { ascending: false })
-      .limit(3);
-
-    if (projectsData && !error) {
-      const projectsWithTags = await Promise.all(
-        projectsData.map(async (project) => {
-          const { data: tagsData } = await supabase
-            .from('project_tags')
-            .select('tag')
-            .eq('project_id', project.id)
-            .limit(3);
-
-          return {
-            ...project,
-            tags: tagsData?.map((t) => t.tag) || [],
-          };
-        })
-      );
-
-      setFeaturedProjects(projectsWithTags);
-    }
-    setLoading(false);
-  };
 
   return (
     <div className="min-h-screen bg-zinc-950">
+      {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-lime-400 rounded-full filter blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl animate-pulse"
+            style={{ animationDelay: '1s' }}
+          />
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center pt-32 pb-20">
@@ -133,6 +94,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
+      {/* WHY CHOOSE US */}
       <section className="py-24 bg-zinc-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -147,7 +109,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {
                 icon: <Zap size={32} />,
                 title: 'Lightning Fast',
-                description: 'Optimized for speed and performance, ensuring your users get the best experience.',
+                description:
+                  'Optimized for speed and performance, ensuring your users get the best experience.',
               },
               {
                 icon: <Award size={32} />,
@@ -157,7 +120,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {
                 icon: <Users size={32} />,
                 title: 'User-Centric',
-                description: 'Every decision is made with your users in mind, ensuring intuitive experiences.',
+                description:
+                  'Every decision is made with your users in mind, ensuring intuitive experiences.',
               },
             ].map((feature, index) => (
               <div
@@ -175,6 +139,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
+      {/* FEATURED PROJECTS */}
       {featuredProjects.length > 0 && (
         <section className="py-24 bg-zinc-950">
           <div className="max-w-7xl mx-auto px-6">
@@ -208,6 +173,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </section>
       )}
 
+      {/* CALL TO ACTION */}
       <section className="py-24 bg-gradient-to-br from-lime-400 to-emerald-500">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-light text-zinc-900 mb-6">

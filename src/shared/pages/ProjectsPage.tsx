@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { ProjectCard } from '../components/ProjectCard';
+import { projectsData } from '../constants/projectData/projectsData';
 
 interface ProjectsPageProps {
   onNavigate: (page: string, data?: any) => void;
@@ -16,9 +16,6 @@ interface Project {
   category: string;
   hours_spent: number | null;
   project_type_detail: string | null;
-}
-
-interface ProjectWithTags extends Project {
   tags: string[];
 }
 
@@ -35,50 +32,27 @@ const categories = [
 ];
 
 export function ProjectsPage({ onNavigate }: ProjectsPageProps) {
-  const [projects, setProjects] = useState<ProjectWithTags[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<ProjectWithTags[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProjects();
+    // simulate fetching from API
+    setTimeout(() => {
+      setProjects(projectsData);
+      setFilteredProjects(projectsData);
+      setLoading(false);
+    }, 500);
   }, []);
 
   useEffect(() => {
     filterProjects();
   }, [projects, selectedCategory, searchQuery]);
 
-  const fetchProjects = async () => {
-    const { data: projectsData, error } = await supabase
-      .from('projects')
-      .select('id, title, slug, description, cover_image, category, hours_spent, project_type_detail')
-      .eq('status', 'published')
-      .order('created_at', { ascending: false });
-
-    if (projectsData && !error) {
-      const projectsWithTags = await Promise.all(
-        projectsData.map(async (project) => {
-          const { data: tagsData } = await supabase
-            .from('project_tags')
-            .select('tag')
-            .eq('project_id', project.id)
-            .limit(5);
-
-          return {
-            ...project,
-            tags: tagsData?.map((t) => t.tag) || [],
-          };
-        })
-      );
-
-      setProjects(projectsWithTags);
-    }
-    setLoading(false);
-  };
-
   const filterProjects = () => {
-    let filtered = projects;
+    let filtered = [...projects];
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(
