@@ -5,7 +5,7 @@ import { Footer } from './shared/components/Footer';
 import { HomePage } from './shared/pages/HomePage';
 import { ProjectsPage } from './shared/pages/ProjectsPage';
 import { ProjectDetailPage } from './shared/pages/ProjectDetailPage';
-import { CalculatorPage } from './shared/pages/CalculatorPage';
+import CalculatorPage from './shared/pages/CalculatorPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './shared/pages/DashboardPage';
 import { DashboardSelectPage } from './shared/pages//DashboardSelectPage';
