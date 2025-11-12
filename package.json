@@ -12,7 +12,9 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.79.0",
     "@tailwindcss/vite": "^4.1.16",
+    "autoprefixer": "^10.4.22",
     "dotenv": "^17.2.3",
+    "lucide-react": "^0.553.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.16"

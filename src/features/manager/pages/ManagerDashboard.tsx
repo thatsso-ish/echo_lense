@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Briefcase, Target, Users, DollarSign, Plus, Calendar } from 'lucide-react';
 import { mockProjects } from '../../../data/mockProjects';
+import { StatCard } from '../components/StatCard';
 
 interface ManagerDashboardProps {
   onNavigate: (page: string) => void;
@@ -142,11 +143,4 @@ export function ManagerDashboard({ onNavigate, displayName, activeView }: Manage
   );
 }
 
-function StatCard({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="p-6 rounded-xl bg-zinc-900 border border-zinc-800">
-      <p className="text-gray-400 text-sm mb-2">{title}</p>
-      <p className="text-3xl font-light text-white">{value}</p>
-    </div>
-  );
-}
+
