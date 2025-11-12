@@ -2,7 +2,7 @@ import { AdminDashboard } from '../../../features/admin/pages/AdminDashboard';
 import { AdminProvider } from '../../../features/admin/contexts/AdminContext';
 import { ManagerDashboard } from '../../../features/manager/pages/ManagerDashboard';
 import { DeveloperDashboard } from '../../../features/developer/pages/DeveloperDashboard';
-import { ClientDashboard } from '../../../features/client/pages/ClientDashboard';
+import { ClientDashboard } from '../../../features/client/components/ClientDashboard';
 
 export function DashboardContent({ role, onNavigate, displayName, activeView }: any) {
   return (
