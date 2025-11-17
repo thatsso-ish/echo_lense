@@ -11,7 +11,7 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ onNavigate, pageData }: DashboardPageProps) {
-  const { user, profile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [demoMode, setDemoMode] = useState(false);
   const [activeView, setActiveView] = useState('overview');
@@ -24,10 +24,10 @@ export function DashboardPage({ onNavigate, pageData }: DashboardPageProps) {
   if (loading) return <LoadingScreen />;
 
   const previewRole = pageData?.previewRole || 'manager';
-  const role = demoMode ? previewRole : (profile?.role || 'manager');
+  const role = demoMode ? previewRole : (user?.role || 'manager');
   const displayName = demoMode
     ? `${previewRole.charAt(0).toUpperCase() + previewRole.slice(1)} Preview`
-    : (profile?.full_name || profile?.email || 'User');
+    : (user?.fullName || user?.email || 'User');
 
   const menuItems = getMenuItems(role);
 

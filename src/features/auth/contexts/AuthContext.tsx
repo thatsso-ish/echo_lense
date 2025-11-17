@@ -1,19 +1,18 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@supabase/supabase-js';
-import { supabase } from '../../../shared/lib/supabase';
+import { authApi } from '../api/authApi';
 
 interface Profile {
   id: string;
   email: string;
-  full_name: string | null;
-  role: 'client' | 'manager' | 'developer' | 'creative';
-  avatar_url: string | null;
-  bio: string | null;
+  fullName: string;
+  role: 'client' | 'manager' | 'developer' | 'creative' | 'admin';
+  permissions: string[];
+  avatar?: string;
+  bio?: string;
 }
 
 interface AuthContextType {
-  user: User | null;
-  profile: Profile | null;
+  user: Profile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
@@ -23,84 +22,60 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [user, setUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      (async () => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        }
-        setLoading(false);
-      })();
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-      })();
-    });
-
-    return () => subscription.unsubscribe();
+    // Try to restore session from token
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (data && !error) {
-      setProfile(data);
+  const fetchProfile = async () => {
+    try {
+      const profile = await authApi.getProfile();
+      setUser(profile);
+    } catch (error) {
+      localStorage.removeItem('authToken');
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
+    try {
+      const response = await authApi.login(email, password);
+      setUser(response.user);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) throw error;
-
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          email: data.user.email!,
-          full_name: fullName,
-          role: 'client',
-        });
-
-      if (profileError) throw profileError;
+    try {
+      const response = await authApi.register(email, password, fullName);
+      setUser(response.user);
+    } catch (error) {
+      throw error;
     }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      await authApi.logout();
+      setUser(null);
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -113,3 +88,4 @@ export function useAuth() {
   }
   return context;
 }
+
