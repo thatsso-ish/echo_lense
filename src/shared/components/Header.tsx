@@ -8,7 +8,7 @@ interface HeaderProps {
 }
 
 export function Header({ onNavigate, currentPage }: HeaderProps) {
-  const { user, profile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

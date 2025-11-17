@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
-  Calendar,
   ExternalLink,
   Github,
   FileText,
@@ -11,64 +10,45 @@ import {
   Target,
   TrendingUp,
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { publicProjectsApi } from '../api/projectsApi';
 import { ProjectCard } from '../components/ProjectCard';
 
 interface ProjectDetailPageProps {
   slug: string;
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, data?: any) => void;
 }
 
 interface FullProject {
-  id: string;
-  title: string;
-  description: string;
-  content: string | null;
-  cover_image: string | null;
-  client_name: string | null;
-  category: string;
-  completion_date: string | null;
-  project_url: string | null;
-  github_url: string | null;
-  design_files_url: string | null;
-  hours_spent: number | null;
-  team_size: number | null;
-  industry: string | null;
-  project_type_detail: string | null;
-  case_study: string | null;
-  challenges: string | null;
-  results: string | null;
-}
-
-interface ProjectImage {
-  id: string;
-  image_url: string;
-  caption: string | null;
-}
-
-interface Technology {
-  technology: string;
-  category: string;
-}
-
-interface RelatedProject {
-  id: string;
+  _id: string;
   title: string;
   slug: string;
   description: string;
-  cover_image: string | null;
+  content?: string;
+  coverImage?: string;
+  clientName?: string;
   category: string;
-  hours_spent: number | null;
-  project_type_detail: string | null;
-  tags: string[];
+  completionDate?: string;
+  projectUrl?: string;
+  githubUrl?: string;
+  designFilesUrl?: string;
+  hoursSpent?: number;
+  teamSize?: number;
+  industry?: string;
+  projectTypeDetail?: string;
+  caseStudy?: string;
+  challenges?: string;
+  results?: string;
+  images?: string[];
+  technologies?: Array<{
+    name: string;
+    category: string;
+  }>;
+  tags?: string[];
+  relatedProjects?: FullProject[];
 }
 
 export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) {
   const [project, setProject] = useState<FullProject | null>(null);
-  const [images, setImages] = useState<ProjectImage[]>([]);
-  const [technologies, setTechnologies] = useState<Technology[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
-  const [relatedProjects, setRelatedProjects] = useState<RelatedProject[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,71 +56,19 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
   }, [slug]);
 
   const fetchProjectDetails = async () => {
-    const { data: projectData, error: projectError } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .maybeSingle();
-
-    if (projectData && !projectError) {
-      setProject(projectData);
-
-      const [imagesResult, techResult, tagsResult, relatedResult] = await Promise.all([
-        supabase
-          .from('project_images')
-          .select('id, image_url, caption')
-          .eq('project_id', projectData.id)
-          .order('order_index', { ascending: true }),
-        supabase
-          .from('project_technologies')
-          .select('technology, category')
-          .eq('project_id', projectData.id),
-        supabase
-          .from('project_tags')
-          .select('tag')
-          .eq('project_id', projectData.id),
-        supabase
-          .from('related_projects')
-          .select('related_project_id')
-          .eq('project_id', projectData.id)
-          .limit(3),
-      ]);
-
-      if (imagesResult.data) setImages(imagesResult.data);
-      if (techResult.data) setTechnologies(techResult.data);
-      if (tagsResult.data) setTags(tagsResult.data.map((t) => t.tag));
-
-      if (relatedResult.data && relatedResult.data.length > 0) {
-        const relatedIds = relatedResult.data.map((r) => r.related_project_id);
-        const { data: relatedProjectsData } = await supabase
-          .from('projects')
-          .select('id, title, slug, description, cover_image, category, hours_spent, project_type_detail')
-          .in('id', relatedIds)
-          .eq('status', 'published');
-
-        if (relatedProjectsData) {
-          const projectsWithTags = await Promise.all(
-            relatedProjectsData.map(async (p) => {
-              const { data: tagsData } = await supabase
-                .from('project_tags')
-                .select('tag')
-                .eq('project_id', p.id)
-                .limit(3);
-              return { ...p, tags: tagsData?.map((t) => t.tag) || [] };
-            })
-          );
-          setRelatedProjects(projectsWithTags);
-        }
-      }
+    try {
+      const data = await publicProjectsApi.getBySlug(slug);
+      setProject(data);
+    } catch (error) {
+      console.error('Failed to fetch project:', error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  const groupedTech = technologies.reduce((acc, tech) => {
+  const groupedTech = (project?.technologies || []).reduce((acc, tech) => {
     if (!acc[tech.category]) acc[tech.category] = [];
-    acc[tech.category].push(tech.technology);
+    acc[tech.category].push(tech.name);
     return acc;
   }, {} as Record<string, string[]>);
 
@@ -178,16 +106,16 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
       </button>
 
       <div className="relative h-[60vh] overflow-hidden">
-        {project.cover_image ? (
+        {project.coverImage ? (
           <img
-            src={project.cover_image}
+            src={project.coverImage}
             alt={project.title}
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900" />
+          <div className="w-full h-full bg-linear-to-br from-zinc-800 to-zinc-900" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/50 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 max-w-6xl mx-auto px-6 pb-12">
           <h1 className="text-6xl md:text-7xl font-light text-white mb-4">
@@ -201,10 +129,10 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-3 space-y-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {project.project_type_detail && (
+              {project.projectTypeDetail && (
                 <div>
                   <p className="text-gray-500 text-sm mb-1 uppercase tracking-wider">Type of Project</p>
-                  <p className="text-white font-medium">{project.project_type_detail}</p>
+                  <p className="text-white font-medium">{project.projectTypeDetail}</p>
                 </div>
               )}
               {project.industry && (
@@ -213,21 +141,21 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
                   <p className="text-white font-medium">{project.industry}</p>
                 </div>
               )}
-              {project.hours_spent && (
+              {project.hoursSpent && (
                 <div>
                   <p className="text-gray-500 text-sm mb-1 uppercase tracking-wider">Hours Spent</p>
                   <p className="text-white font-medium flex items-center gap-2">
                     <Clock size={16} className="text-lime-400" />
-                    {project.hours_spent}:00 hours
+                    {project.hoursSpent}:00 hours
                   </p>
                 </div>
               )}
-              {project.team_size && (
+              {project.teamSize && (
                 <div>
                   <p className="text-gray-500 text-sm mb-1 uppercase tracking-wider">Team Size</p>
                   <p className="text-white font-medium flex items-center gap-2">
                     <Users size={16} className="text-lime-400" />
-                    {project.team_size} {project.team_size === 1 ? 'person' : 'people'}
+                    {project.teamSize} {project.teamSize === 1 ? 'person' : 'people'}
                   </p>
                 </div>
               )}
@@ -259,33 +187,30 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
               </div>
             )}
 
-            {images.length > 0 && (
+            {(project.images && project.images.length > 0) && (
               <div className="space-y-8">
                 <h2 className="text-3xl font-light text-white mb-6">Project Gallery</h2>
-                {images.map((image) => (
-                  <div key={image.id} className="rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+                {project.images.map((imageUrl, idx) => (
+                  <div key={idx} className="rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
                     <img
-                      src={image.image_url}
-                      alt={image.caption || project.title}
+                      src={imageUrl}
+                      alt={project.title}
                       className="w-full"
                     />
-                    {image.caption && (
-                      <p className="p-6 text-gray-400">{image.caption}</p>
-                    )}
                   </div>
                 ))}
               </div>
             )}
 
-            {project.case_study && (
+            {project.caseStudy && (
               <div>
                 <h2 className="text-3xl font-light text-white mb-6 flex items-center gap-3">
                   <Target className="text-lime-400" size={32} />
                   <span>Case Study</span>
                 </h2>
-                <div className="p-8 rounded-2xl bg-gradient-to-br from-lime-400/5 to-emerald-400/5 border border-lime-400/20">
+                <div className="p-8 rounded-2xl bg-linear-to-br from-lime-400/5 to-emerald-400/5 border border-lime-400/20">
                   <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                    {project.case_study}
+                    {project.caseStudy}
                   </p>
                 </div>
               </div>
@@ -324,22 +249,22 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
                 </div>
               </div>
 
-              {(project.project_url || project.github_url || project.design_files_url) && (
+              {(project.projectUrl || project.githubUrl || project.designFilesUrl) && (
                 <div className="space-y-3">
-                  {project.project_url && (
+                  {project.projectUrl && (
                     <a
-                      href={project.project_url}
+                      href={project.projectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white transition-all group"
+                      className="flex items-center justify-between w-full px-6 py-4 rounded-2xl bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white transition-all group"
                     >
                       <span className="font-medium">Visit website</span>
                       <ExternalLink size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                     </a>
                   )}
-                  {project.github_url && (
+                  {project.githubUrl && (
                     <a
-                      href={project.github_url}
+                      href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-between w-full px-6 py-4 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-lime-400 text-white transition-all group"
@@ -348,9 +273,9 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
                       <Github size={20} className="group-hover:scale-110 transition-transform" />
                     </a>
                   )}
-                  {project.design_files_url && (
+                  {project.designFilesUrl && (
                     <a
-                      href={project.design_files_url}
+                      href={project.designFilesUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-between w-full px-6 py-4 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-lime-400 text-white transition-all group"
@@ -362,11 +287,11 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
                 </div>
               )}
 
-              {tags.length > 0 && (
+              {(project.tags && project.tags.length > 0) && (
                 <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800">
                   <h3 className="text-white font-semibold mb-4 uppercase tracking-wider text-sm">Tags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {tags.map((tag, i) => (
+                    {project.tags.map((tag, i) => (
                       <span
                         key={i}
                         className="px-3 py-1.5 rounded-full bg-zinc-800 text-gray-400 text-xs font-medium"
@@ -378,19 +303,19 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
                 </div>
               )}
 
-              {(project.completion_date || project.client_name) && (
+              {(project.completionDate || project.clientName) && (
                 <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-3 text-sm">
-                  {project.client_name && (
+                  {project.clientName && (
                     <div>
                       <p className="text-gray-500 mb-1">Client</p>
-                      <p className="text-white font-medium">{project.client_name}</p>
+                      <p className="text-white font-medium">{project.clientName}</p>
                     </div>
                   )}
-                  {project.completion_date && (
+                  {project.completionDate && (
                     <div>
                       <p className="text-gray-500 mb-1">Completed</p>
                       <p className="text-white font-medium">
-                        {new Date(project.completion_date).toLocaleDateString('en-US', {
+                        {new Date(project.completionDate).toLocaleDateString('en-US', {
                           month: 'long',
                           year: 'numeric',
                         })}
@@ -403,17 +328,17 @@ export function ProjectDetailPage({ slug, onNavigate }: ProjectDetailPageProps) 
           </div>
         </div>
 
-        {relatedProjects.length > 0 && (
+        {(project.relatedProjects && project.relatedProjects.length > 0) && (
           <div className="border-t border-zinc-800 pt-16">
             <h2 className="text-4xl font-light text-white mb-8">
               <span className="text-lime-400">Similar</span> Projects
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {relatedProjects.map((relatedProject) => (
+              {project.relatedProjects.map((relatedProject) => (
                 <ProjectCard
-                  key={relatedProject.id}
+                  key={relatedProject._id}
                   project={relatedProject}
-                  tags={relatedProject.tags}
+                  tags={relatedProject.tags || []}
                   onClick={() => onNavigate('project-detail', { slug: relatedProject.slug })}
                 />
               ))}

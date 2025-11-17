@@ -2,29 +2,37 @@ import { Clock, ArrowRight } from 'lucide-react';
 
 interface ProjectCardProps {
   project: {
-    id: string;
+    _id?: string;
+    id?: string;
     title: string;
     slug: string;
     description: string;
-    cover_image: string | null;
+    coverImage?: string;
+    cover_image?: string;
     category: string;
-    hours_spent: number | null;
-    project_type_detail: string | null;
+    hoursSpent?: number;
+    hours_spent?: number;
+    projectTypeDetail?: string;
+    project_type_detail?: string;
   };
   tags: string[];
   onClick: () => void;
 }
 
 export function ProjectCard({ project, tags, onClick }: ProjectCardProps) {
+  const coverImage = project.coverImage || project.cover_image;
+  const hoursSpent = project.hoursSpent || project.hours_spent;
+  const projectTypeDetail = project.projectTypeDetail || project.project_type_detail;
+
   return (
     <button
       onClick={onClick}
       className="group block text-left bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-lime-400 transition-all duration-300"
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-zinc-800">
-        {project.cover_image ? (
+      <div className="relative aspect-16/10 overflow-hidden bg-zinc-800">
+        {coverImage ? (
           <img
-            src={project.cover_image}
+            src={coverImage}
             alt={project.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -35,12 +43,12 @@ export function ProjectCard({ project, tags, onClick }: ProjectCardProps) {
             </div>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60" />
 
-        {project.hours_spent && (
+        {hoursSpent && (
           <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 backdrop-blur-sm text-lime-400 text-sm font-medium">
             <Clock size={14} />
-            <span>{project.hours_spent}:00</span>
+            <span>{hoursSpent}:00</span>
           </div>
         )}
       </div>
@@ -52,7 +60,7 @@ export function ProjectCard({ project, tags, onClick }: ProjectCardProps) {
 
         <div className="flex flex-wrap gap-2 mb-4">
           <span className="px-3 py-1 rounded-full border border-lime-400/30 text-lime-400 text-xs font-medium uppercase tracking-wide">
-            {project.project_type_detail || project.category}
+            {projectTypeDetail || project.category}
           </span>
           {tags.slice(0, 3).map((tag, index) => (
             <span
