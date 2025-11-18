@@ -1,5 +1,6 @@
 import { StatCard } from './StatCard';
-import { DeveloperProjectCard } from './DeveloperProjectCard';
+
+import { DashboardProjectCard } from '../../../shared/components/DashboardProjectCard';
 
 export function DeveloperDashboardProjects({ projects, tasksCount, onNavigate }: { projects: any[]; tasksCount: any; onNavigate: (page: string) => void }) {
   return (
@@ -11,7 +12,17 @@ export function DeveloperDashboardProjects({ projects, tasksCount, onNavigate }:
       </div>
       <div className="space-y-4">
         {projects.map((project) => (
-          <DeveloperProjectCard key={project.id} project={project} onNavigate={onNavigate} />
+          <DashboardProjectCard
+            key={project.id}
+            name={project.name}
+            client={project.client?.company}
+            startDate={project.startDate}
+            deadline={project.deadline}
+            progress={project.progress}
+            teamSize={project.team.length + 1}
+            status={project.status}
+            onClick={() => onNavigate('project-detail-view', { projectId: project.id })}
+          />
         ))}
       </div>
     </div>
