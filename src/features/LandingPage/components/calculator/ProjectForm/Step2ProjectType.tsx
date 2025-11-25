@@ -1,4 +1,4 @@
-import { projectTypes } from '../../../constants/calculator/CalculatorData';
+import { projectTypes } from '../../../../../shared/constants/calculator/CalculatorData';
 
 
 
