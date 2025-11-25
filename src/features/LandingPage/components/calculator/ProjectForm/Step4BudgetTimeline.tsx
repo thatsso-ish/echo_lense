@@ -1,4 +1,4 @@
-import { budgetRanges, timelines } from '../../../constants/calculator/CalculatorData';
+import { budgetRanges, timelines } from '../../../../../shared/constants/calculator/CalculatorData';
 import { DollarSign } from 'lucide-react';
 
 export default function Step4BudgetTimeline({ formData, setFormData, calculateEstimate }:any) {
