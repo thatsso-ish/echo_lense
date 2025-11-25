@@ -1,4 +1,4 @@
-import { Project } from "../../../data/mockProjects";
+import { Project } from "../../../../data/mockProjects";
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
 export default function MilestonesTab({ project }: { project: Project }) {

@@ -1,4 +1,4 @@
-import { Task } from "../../../data/mockProjects";
+import { Task } from "../../../../data/mockProjects";
 import TaskCard from "./TaskCard";
 
 type ColorKey = "gray" | "blue" | "yellow" | "purple" | "green";

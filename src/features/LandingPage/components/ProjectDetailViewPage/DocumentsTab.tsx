@@ -1,5 +1,5 @@
 import { ExternalLink, FileText, Download } from "lucide-react";
-import { Project } from "../../../data/mockProjects";
+import { Project } from "../../../../data/mockProjects";
 
 export default function DocumentsTab({ project }: { project: Project }) {
   return (

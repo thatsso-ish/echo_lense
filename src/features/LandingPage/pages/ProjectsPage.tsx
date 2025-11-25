@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { projectsData } from "../constants/projectData/projectsData";
+import { projectsData } from "../../../shared/constants/projectData/projectsData";
 
 import { ProjectsHeader } from "../components/ProjectPage/ProjectsHeader";
 import { ProjectsSearch } from "../components/ProjectPage/ProjectsSearch";

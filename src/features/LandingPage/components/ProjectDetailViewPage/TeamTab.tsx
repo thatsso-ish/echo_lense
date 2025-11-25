@@ -1,4 +1,4 @@
-import { Project } from "../../../data/mockProjects";
+import { Project } from "../../../../data/mockProjects";
 
 export default function TeamTab({ project }: { project: Project }) {
   return (

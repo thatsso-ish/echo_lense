@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { mockProjects} from "../../data/mockProjects";
+import { mockProjects} from "../../../data/mockProjects";
 
 import OverviewTab from "../components/ProjectDetailViewPage/OverviewTab";
 import TasksTab from "../components/ProjectDetailViewPage/TasksTab";

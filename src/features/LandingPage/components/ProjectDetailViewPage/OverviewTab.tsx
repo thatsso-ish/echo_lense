@@ -1,5 +1,5 @@
 import { Calendar, DollarSign, Target, ExternalLink, GitBranch } from "lucide-react";
-import { Project } from "../../../data/mockProjects";
+import { Project } from "../../../../data/mockProjects";
 import StatCard from "./StatCard";
 import DetailRow from "./DetailRow";
 

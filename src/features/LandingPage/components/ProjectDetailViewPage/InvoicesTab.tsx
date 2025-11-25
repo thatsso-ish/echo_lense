@@ -1,5 +1,5 @@
 import { ExternalLink, Download } from "lucide-react";
-import { Project } from "../../../data/mockProjects";
+import { Project } from "../../../../data/mockProjects";
 
 export default function InvoicesTab({ project }: { project: Project }) {
   return (

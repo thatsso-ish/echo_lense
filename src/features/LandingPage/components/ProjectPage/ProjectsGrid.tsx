@@ -1,4 +1,4 @@
-import { ProjectCard } from "../ProjectCard";
+import { ProjectCard } from "../../../../shared/components/ProjectCard";
 
 export function ProjectsGrid({ projects, onNavigate }: any) {
   return (

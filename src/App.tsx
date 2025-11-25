@@ -3,13 +3,13 @@ import { AuthProvider } from './features/auth/contexts/AuthContext';
 import { Header } from './shared/components/Header';
 import { Footer } from './shared/components/Footer';
 import { HomePage } from './shared/pages/HomePage';
-import { ProjectsPage } from './shared/pages/ProjectsPage';
-import { ProjectDetailPage } from './shared/pages/ProjectDetailPage';
-import CalculatorPage from './shared/pages/CalculatorPage';
+import { ProjectsPage } from './features/LandingPage/pages/ProjectsPage';
+import { ProjectDetailPage } from './features/LandingPage/pages/ProjectDetailPage';
+import CalculatorPage from './features/LandingPage/pages/CalculatorPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
-import { DashboardPage } from './shared/pages/DashboardPage';
-import { DashboardSelectPage } from './shared/pages//DashboardSelectPage';
-import ProjectDetailViewPage from './shared/pages/ProjectDetailViewPage';
+import { DashboardPage } from './features/LandingPage/pages/DashboardPage';
+import { DashboardSelectPage } from './features/LandingPage/pages/DashboardSelectPage';
+import ProjectDetailViewPage from './features/LandingPage/pages/ProjectDetailViewPage';
 
 type Page = 'home' | 'projects' | 'project-detail' | 'about' | 'calculator' | 'contact' | 'login' | 'dashboard' | 'dashboard-select' | 'project-detail-view';
 
