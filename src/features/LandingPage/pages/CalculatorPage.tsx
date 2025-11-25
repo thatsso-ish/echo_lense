@@ -1,11 +1,11 @@
 import { Check, ArrowRight } from 'lucide-react';
-import { useCalculator } from '../hooks/Calculator/useCalculator';
-import StepProgress from '../../shared/components/calculator/ProjectForm/StepProgress';
-import Step1ContactInfo from '../../shared/components/calculator/ProjectForm/Step1ContactInfo';
-import Step2ProjectType from '../../shared/components/calculator/ProjectForm/Step2ProjectType';
-import Step3Features from '../../shared/components/calculator/ProjectForm/Step3Features';
-import Step4BudgetTimeline from '../../shared/components/calculator/ProjectForm/Step4BudgetTimeline';
-import { CalculatorPageProps } from '../../shared/types/calculator/CalculatorPageProps';
+import { useCalculator } from '../../../shared/hooks/Calculator/useCalculator';
+import StepProgress from '../components/calculator/ProjectForm/StepProgress';
+import Step1ContactInfo from '../components/calculator/ProjectForm/Step1ContactInfo';
+import Step2ProjectType from '../components/calculator/ProjectForm/Step2ProjectType';
+import Step3Features from '../components/calculator/ProjectForm/Step3Features';
+import Step4BudgetTimeline from '../components/calculator/ProjectForm/Step4BudgetTimeline';
+import { CalculatorPageProps } from '../../../shared/types/calculator/CalculatorPageProps';
 
 export default function CalculatorPage({ onNavigate }: CalculatorPageProps) {
   const { step, setStep, formData, setFormData, calculateEstimate, toggleFeature } = useCalculator();

@@ -1,6 +1,6 @@
 import { DashboardGrid } from '../components/DashBoardSelectPage/DashboardGrid';
 import { DashboardHeader } from '../components/DashBoardSelectPage//DashboardHeader';
-import { dashboardsData } from '../constants/DashBoardData/dashboardsData';
+import { dashboardsData } from '../../../shared/constants/DashBoardData/dashboardsData';
 
 interface DashboardSelectPageProps {
   onNavigate: (page: string, data?: any) => void;

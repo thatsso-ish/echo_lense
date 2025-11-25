@@ -1,5 +1,6 @@
-import { FullProject } from "../../types/ProjectDetailPage/types";
-import { ProjectCard } from "../../components/ProjectCard";
+import { FullProject } from "../../../../shared/types/ProjectDetailPage/types";
+
+import { ProjectCard } from "../../../../shared/components/ProjectCard";
 
 export default function RelatedProjects({
   projects,
