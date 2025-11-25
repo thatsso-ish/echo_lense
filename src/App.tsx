@@ -9,7 +9,7 @@ import CalculatorPage from './shared/pages/CalculatorPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './shared/pages/DashboardPage';
 import { DashboardSelectPage } from './shared/pages//DashboardSelectPage';
-import { ProjectDetailViewPage } from './shared/pages/ProjectDetailViewPage';
+import ProjectDetailViewPage from './shared/pages/ProjectDetailViewPage';
 
 type Page = 'home' | 'projects' | 'project-detail' | 'about' | 'calculator' | 'contact' | 'login' | 'dashboard' | 'dashboard-select' | 'project-detail-view';
 
