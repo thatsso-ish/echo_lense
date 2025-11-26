@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { getProjectBySlug } from "../constants/projectData/projectsData";
+import { getProjectBySlug } from "../../../shared/constants/projectData/projectsData";
 
-import { FullProject } from "../types/ProjectDetailPage/types";
+import { FullProject } from "../../../shared/types/ProjectDetailPage/types";
 
 import HeaderSection from "../components/ProjectDetailPage/HeaderSection";
 import InfoGrid from "../components/ProjectDetailPage/InfoGrid";

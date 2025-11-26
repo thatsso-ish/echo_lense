@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../src/features/auth/contexts/AuthContext';
-import { Sidebar } from '../../shared/components/DashBoardPage/Sidebar';
-import { LoadingScreen } from '../../shared/components/DashBoardPage/LoadingScreen';
-import { getMenuItems } from '../../shared/utils/DashBoardPage/getMenuItems';
-import { DashboardContent } from '../../shared/components/DashBoardPage/DashboardContent';
+import { useAuth } from '../../auth/contexts/AuthContext';
+import { Sidebar } from '../components/DashBoardPage/Sidebar';
+import { LoadingScreen } from '../components/DashBoardPage/LoadingScreen';
+import { getMenuItems } from '../../../shared/utils/DashBoardPage/getMenuItems';
+import { DashboardContent } from '../components/DashBoardPage/DashboardContent';
 
 interface DashboardPageProps {
   onNavigate: (page: string) => void;

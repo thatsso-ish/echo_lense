@@ -1,12 +1,12 @@
-import { features } from '../../../constants/calculator/CalculatorData';
+import { features } from '../../../../../shared/constants/calculator/CalculatorData';
 import { Check } from 'lucide-react';
 
-export default function Step3Features({ formData, toggleFeature }) {
+export default function Step3Features({ formData, toggleFeature }:any) {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-light text-white mb-6">Features & Requirements</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {features.map((feature) => (
+        {features.map((feature:any) => (
           <button
             key={feature.id}
             type="button"
